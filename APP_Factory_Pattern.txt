@@ -1,0 +1,19 @@
+APP_FACTORY_PATTERN/
+│
+├─ app/
+│   ├─ __init__.py
+│   ├─ extensions.py
+│   ├─ models.py
+│   ├─ mechanic/
+│   │   ├─ __init__.py
+│   │   ├─ routes.py
+│   │   └─ schemas.py
+│   └─ service_ticket/
+│       ├─ __init__.py
+│       ├─ routes.py
+│       └─ schemas.py
+│
+├─ run.py
+├─ requirements.txt
+└─ instance/
+    └─ shop.db  
