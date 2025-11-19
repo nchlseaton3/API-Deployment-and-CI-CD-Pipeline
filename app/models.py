@@ -1,0 +1,61 @@
+from app.extensions import db
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Integer, String, Float, Date, ForeignKey
+
+
+class Customers(db.Model):
+    __tablename__ = "customers"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    first_name: Mapped[str] = mapped_column(String)
+    last_name: Mapped[str] = mapped_column(String)
+    email: Mapped[str] = mapped_column(String, unique=True)
+    phone: Mapped[str] = mapped_column(String)
+    address: Mapped[str] = mapped_column(String)
+
+    service_tickets = relationship("ServiceTickets", back_populates="customer")
+
+
+class ServiceTickets(db.Model):
+    __tablename__ = "service_tickets"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    customer_id: Mapped[int] = mapped_column(ForeignKey("customers.id"))
+    service_desc: Mapped[str] = mapped_column(String)
+    service_date: Mapped[str] = mapped_column(Date)
+    vin: Mapped[str] = mapped_column(String)
+
+    customer = relationship("Customers", back_populates="service_tickets")
+    mechanics = relationship(
+        "Mechanics",
+        secondary="service_assignments",
+        back_populates="service_tickets"
+    )
+
+
+class Mechanics(db.Model):
+    __tablename__ = "mechanics"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    first_name: Mapped[str] = mapped_column(String)
+    last_name: Mapped[str] = mapped_column(String)
+    email: Mapped[str] = mapped_column(String, unique=True)
+    salary: Mapped[float] = mapped_column(Float)
+    address: Mapped[str] = mapped_column(String)
+
+    service_tickets = relationship(
+        "ServiceTickets",
+        secondary="service_assignments",
+        back_populates="mechanics"
+    )
+
+
+class ServiceAssignments(db.Model):
+    __tablename__ = "service_assignments"
+
+    service_ticket_id = mapped_column(
+        ForeignKey("service_tickets.id"), primary_key=True
+    )
+    mechanic_id = mapped_column(
+        ForeignKey("mechanics.id"), primary_key=True
+    )
