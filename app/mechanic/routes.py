@@ -2,18 +2,64 @@ from flask import request, jsonify
 from app.extensions import db
 from app.models import Mechanics
 from . import mechanic_bp
-from .schemas import mechanic_schema, mechanics_schema
-
+from .schemas import mechanic_schema, mechanics_schema, login_schema
+from app.util.auth import encode_token, token_required
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # POST '/' : Create a new mechanic
 @mechanic_bp.post("/")
 def create_mechanic():
     data = request.json
-    mechanic = mechanic_schema.load(data)
+
+    mechanic = Mechanics(
+        first_name=data["first_name"],
+        last_name=data["last_name"],
+        email=data["email"],
+        salary=data["salary"],
+        address=data["address"]
+    )
+
+    mechanic.set_password(data["password"])
+
     db.session.add(mechanic)
     db.session.commit()
+
     return mechanic_schema.jsonify(mechanic), 201
 
+@mechanic_bp.post("/login")
+def login():
+    data = login_schema.load(request.json)
+
+    mechanic = Mechanics.query.filter_by(email=data["email"]).first()
+
+    if not mechanic or not check_password_hash(mechanic.password, data["password"]):
+        return jsonify({"error": "Invalid credentials"}), 401
+
+    token = encode_token(mechanic.id)
+
+    return jsonify({
+        "message": f"Welcome {mechanic.first_name}",
+        "token": token
+    }), 200
+
+
+@mechanic_bp.get("/my-tickets")
+@token_required
+def my_tickets():
+    mechanic_id = request.logged_in_user_id
+    mechanic = Mechanics.query.get_or_404(mechanic_id)
+
+    tickets = mechanic.service_tickets
+
+    return jsonify([
+        {
+            "id": t.id,
+            "service_desc": t.service_desc,
+            "service_date": str(t.service_date),
+            "vin": t.vin
+        }
+        for t in tickets
+    ])
 
 # GET '/' : Get all mechanics
 @mechanic_bp.get("/")
