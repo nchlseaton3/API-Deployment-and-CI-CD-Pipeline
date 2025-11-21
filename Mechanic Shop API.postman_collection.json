@@ -77,7 +77,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"first_name\": \"Kendra\",\r\n  \"last_name\": \"Mills\",\r\n  \"email\": \"kmills@example.com\",\r\n  \"salary\": 61000,\r\n  \"address\": \"299 Hawthorne Ln\"\r\n}\r\n",
+					"raw": "{\r\n  \"first_name\": \"Rick\",\r\n  \"last_name\": \"James\",\r\n  \"email\": \"rjames@example.com\",\r\n  \"salary\": 60000,\r\n  \"address\": \"300 Hawthorne Ln\",\r\n  \"password\": \"rick123\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -267,6 +267,77 @@
 					"path": [
 						"service-tickets",
 						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mechanic Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"rjames@example.com\",\r\n  \"password\": \"rick123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/mechanics/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"mechanics",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "My Tickets",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwicm9sZSI6Im1lY2hhbmljIiwiaWF0IjoxNzYzNzUyMjM0LCJleHAiOjE3NjM3NTU4MzR9.W5a9v24oG-P8nwfeMIOdgXXWLpFi_iAIonJdn0QyNI0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/mechanics/my-tickets",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"mechanics",
+						"my-tickets"
 					]
 				}
 			},
