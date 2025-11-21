@@ -43,6 +43,9 @@ class Mechanics(db.Model):
     salary: Mapped[float] = mapped_column(Float)
     address: Mapped[str] = mapped_column(String)
 
+      # For Authentication
+    password: Mapped[str] = mapped_column(String)
+
     service_tickets = relationship(
         "ServiceTickets",
         secondary="service_assignments",
