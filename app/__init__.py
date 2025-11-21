@@ -1,6 +1,5 @@
 from flask import Flask
 from .extensions import db, ma
-from . import models  # make sure models are imported
 from .mechanic import mechanic_bp
 from .service_ticket import service_ticket_bp
 
@@ -8,7 +7,8 @@ from .service_ticket import service_ticket_bp
 def create_app():
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///shop.db"
-
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    
     # Init extensions
     db.init_app(app)
     ma.init_app(app)

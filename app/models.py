@@ -1,6 +1,7 @@
 from app.extensions import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Float, Date, ForeignKey
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class Customers(db.Model):
@@ -51,6 +52,13 @@ class Mechanics(db.Model):
         secondary="service_assignments",
         back_populates="mechanics"
     )
+
+    # Password helpers
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
 
 class ServiceAssignments(db.Model):
