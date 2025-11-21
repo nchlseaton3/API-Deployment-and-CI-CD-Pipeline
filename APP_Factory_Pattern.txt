@@ -4,10 +4,15 @@ APP_FACTORY_PATTERN/
 │   ├─ __init__.py
 │   ├─ extensions.py
 │   ├─ models.py
+│   │
+│   ├─ util/
+│   │   └─ auth.py          
+│   │
 │   ├─ mechanic/
 │   │   ├─ __init__.py
 │   │   ├─ routes.py
-│   │   └─ schemas.py
+│   │   └─ schemas.py       
+│   │
 │   └─ service_ticket/
 │       ├─ __init__.py
 │       ├─ routes.py
@@ -16,4 +21,4 @@ APP_FACTORY_PATTERN/
 ├─ run.py
 ├─ requirements.txt
 └─ instance/
-    └─ shop.db  
+    └─ shop.db
