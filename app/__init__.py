@@ -1,5 +1,5 @@
 from flask import Flask
-from .extensions import db, ma
+from .extensions import db, ma, limiter, cache 
 from .mechanic import mechanic_bp
 from .service_ticket import service_ticket_bp
 
@@ -8,10 +8,15 @@ def create_app():
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///shop.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    app.config["CACHE_TYPE"] = "SimpleCache"
+    app.config["CACHE_DEFAULT_TIMEOUT"] = 60
     
     # Init extensions
     db.init_app(app)
     ma.init_app(app)
+    limiter.init_app(app)
+    cache.init_app(app)
 
     # Register blueprints
     app.register_blueprint(mechanic_bp, url_prefix="/mechanics")

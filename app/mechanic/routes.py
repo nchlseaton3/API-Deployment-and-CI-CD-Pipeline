@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from app.extensions import db
+from app.extensions import db, limiter, cache
 from app.models import Mechanics
 from . import mechanic_bp
 from .schemas import mechanic_schema, mechanics_schema, login_schema
@@ -8,6 +8,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 # POST '/' : Create a new mechanic
 @mechanic_bp.post("/")
+@limiter.limit("5/minute")
+@cache.cached(timeout=20)
 def create_mechanic():
     data = request.json
 
@@ -70,6 +72,7 @@ def get_mechanics():
 
 # PUT '/<int:id>' : Update mechanic
 @mechanic_bp.put("/<int:id>")
+@token_required
 def update_mechanic(id):
     mechanic = Mechanics.query.get_or_404(id)
     data = request.json
@@ -84,6 +87,7 @@ def update_mechanic(id):
 
 # DELETE '/<int:id>' : Delete mechanic
 @mechanic_bp.delete("/<int:id>")
+@token_required
 def delete_mechanic(id):
     mechanic = Mechanics.query.get_or_404(id)
     db.session.delete(mechanic)
