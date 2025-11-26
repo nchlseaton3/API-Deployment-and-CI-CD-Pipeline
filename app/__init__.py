@@ -2,6 +2,7 @@ from flask import Flask
 from .extensions import db, ma, limiter, cache 
 from .mechanic import mechanic_bp
 from .service_ticket import service_ticket_bp
+from .parts import parts_bp
 
 
 def create_app():
@@ -21,6 +22,8 @@ def create_app():
     # Register blueprints
     app.register_blueprint(mechanic_bp, url_prefix="/mechanics")
     app.register_blueprint(service_ticket_bp, url_prefix="/service-tickets")
+    app.register_blueprint(parts_bp, url_prefix="/parts")
+
 
     # Auto-create tables
     with app.app_context():
