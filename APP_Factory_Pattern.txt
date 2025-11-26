@@ -1,19 +1,24 @@
 APP_FACTORY_PATTERN/
 │
 ├─ app/
-│   ├─ __init__.py
+│   ├─ __init__.py               
 │   ├─ extensions.py
 │   ├─ models.py
 │   │
 │   ├─ util/
-│   │   └─ auth.py          
+│   │   └─ auth.py
 │   │
 │   ├─ mechanic/
 │   │   ├─ __init__.py
 │   │   ├─ routes.py
-│   │   └─ schemas.py       
+│   │   └─ schemas.py
 │   │
-│   └─ service_ticket/
+│   ├─ service_ticket/
+│   │   ├─ __init__.py
+│   │   ├─ routes.py
+│   │   └─ schemas.py
+│   │
+│   └─ parts/                     
 │       ├─ __init__.py
 │       ├─ routes.py
 │       └─ schemas.py
