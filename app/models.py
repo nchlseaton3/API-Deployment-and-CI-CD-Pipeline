@@ -26,6 +26,7 @@ class ServiceTickets(db.Model):
     service_date: Mapped[str] = mapped_column(Date)
     vin: Mapped[str] = mapped_column(String)
 
+    
     customer = relationship("Customers", back_populates="service_tickets")
     mechanics = relationship(
         "Mechanics",
@@ -33,6 +34,7 @@ class ServiceTickets(db.Model):
         back_populates="service_tickets"
     )
 
+    parts = relationship("Parts", back_populates="ticket")
 
 class Mechanics(db.Model):
     __tablename__ = "mechanics"
@@ -70,3 +72,24 @@ class ServiceAssignments(db.Model):
     mechanic_id = mapped_column(
         ForeignKey("mechanics.id"), primary_key=True
     )
+
+
+class Inventory(db.Model):
+    __tablename__ = "inventory"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String)
+    price: Mapped[float] = mapped_column(Float)
+
+    parts = relationship("Parts", back_populates="description")
+
+
+class Parts(db.Model):
+    __tablename__ = "parts"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    desc_id: Mapped[int] = mapped_column(ForeignKey("inventory.id"))
+    ticket_id: Mapped[int] = mapped_column(ForeignKey("service_tickets.id"), nullable=True)
+
+    description = relationship("Inventory", back_populates="parts")
+    ticket = relationship("ServiceTickets", back_populates="parts")
