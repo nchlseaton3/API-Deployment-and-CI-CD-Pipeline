@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from ..extensions import db
-from ..models import ServiceTickets, Mechanics
+from ..models import ServiceTickets, Mechanics, Parts
 from . import service_ticket_bp
 from .schemas import service_ticket_schema, service_tickets_schema
 
