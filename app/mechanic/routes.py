@@ -1,10 +1,12 @@
 from flask import request, jsonify
 from app.extensions import db, limiter, cache
-from app.models import Mechanics
+from app.models import Mechanics, ServiceTickets
 from . import mechanic_bp
 from .schemas import mechanic_schema, mechanics_schema, login_schema
 from app.util.auth import encode_token, token_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import func 
+
 
 # POST '/' : Create a new mechanic
 @mechanic_bp.post("/")
@@ -93,3 +95,20 @@ def delete_mechanic(id):
     db.session.delete(mechanic)
     db.session.commit()
     return jsonify({"message": "Mechanic deleted"})
+
+#  Get '/ranking' : Mechanic ranking by numbers 
+@mechanic_bp.get("/ranking")
+def mechanic_ranking():
+    result = db.session.query(
+        Mechanics.first_name,
+        Mechanics.last_name,
+        func.count(ServiceTickets.id).label("ticket_count")
+    ).join(Mechanics.service_tickets).group_by(Mechanics.id).order_by(func.count(ServiceTickets.id).desc()).all()
+
+    return jsonify([
+        {
+            "first_name": r[0],
+            "last_name": r[1],
+            "ticket_count": r[2]
+        } for r in result
+    ])
