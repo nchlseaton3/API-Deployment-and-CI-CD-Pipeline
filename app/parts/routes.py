@@ -51,6 +51,23 @@ def update_inventory(id):
 @parts_bp.delete("/<int:id>")
 def delete_inventory(id):
     item = Inventory.query.get_or_404(id)
+     # Check if any Parts use this inventory item
+    if Parts.query.filter_by(desc_id=id).count() > 0:
+        return {"error": "Cannot delete inventory item because part instances exist. "
+                     "Use /parts/<id>/force-delete to remove everything."}, 400
     db.session.delete(item)
     db.session.commit()
     return jsonify({"message": "Deleted"})
+
+
+@parts_bp.delete("/<int:id>/force-delete")
+def force_delete_inventory(id):
+    item = Inventory.query.get_or_404(id)
+
+    # Delete all part instances linked to this inventory
+    Parts.query.filter_by(desc_id=id).delete()
+
+    db.session.delete(item)
+    db.session.commit()
+
+    return {"message": "Inventory item and all related part instances deleted"}

@@ -144,7 +144,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"customer_id\": 3,\r\n  \"service_desc\": \"Engine diagnostic and battery test\",\r\n  \"service_date\": \"2025-03-10\",\r\n  \"vin\": \"3N1AB7AP0FY332115\"\r\n}\r\n",
+					"raw": "{\r\n  \"customer_id\": 2,\r\n  \"service_desc\": \"Brake pad replacement\",\r\n  \"service_date\": \"2025-02-10\",\r\n  \"vin\": \"1HGEM229X1L123456\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -184,7 +184,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/service-tickets/3/assign-mechanic/4",
+					"raw": "http://127.0.0.1:5000/service-tickets/2/assign-mechanic/2",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -195,9 +195,9 @@
 					"port": "5000",
 					"path": [
 						"service-tickets",
-						"3",
+						"2",
 						"assign-mechanic",
-						"4"
+						"2"
 					]
 				}
 			},
@@ -306,6 +306,9 @@
 		},
 		{
 			"name": "My Tickets",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -321,10 +324,19 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwicm9sZSI6Im1lY2hhbmljIiwiaWF0IjoxNzYzNzUyMjM0LCJleHAiOjE3NjM3NTU4MzR9.W5a9v24oG-P8nwfeMIOdgXXWLpFi_iAIonJdn0QyNI0",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwicm9sZSI6Im1lY2hhbmljIiwiaWF0IjoxNzY0NjAyMDg4LCJleHAiOjE3NjQ2MDU2ODh9.wlAfH5PQOhBXDk0b0AxJmmt_gFTu2kkgZphTaLmbmqA",
 						"type": "text"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "http://127.0.0.1:5000/mechanics/my-tickets",
 					"protocol": "http",
@@ -338,6 +350,203 @@
 					"path": [
 						"mechanics",
 						"my-tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Inventory Part",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Brake Fluid\",\r\n  \"price\": 9.00\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/parts/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"parts",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Part to Ticket",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/service-tickets/2/add-part/4",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"service-tickets",
+						"2",
+						"add-part",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Parts",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/parts",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"parts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Part",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"desc_id\": 5\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/parts/create-part",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"parts",
+						"create-part"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Request",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"High-Performance Oil Filter\",\r\n  \"price\": 19.99\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/parts/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"parts",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Request",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/parts/5/force-delete",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"parts",
+						"5",
+						"force-delete"
 					]
 				}
 			},

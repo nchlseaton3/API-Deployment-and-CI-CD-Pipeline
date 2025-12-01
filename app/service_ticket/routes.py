@@ -42,3 +42,13 @@ def remove_mechanic(ticket_id, mechanic_id):
 def get_tickets():
     tickets = ServiceTickets.query.all()
     return service_tickets_schema.jsonify(tickets)
+
+#  PUT /<int:ticket_id>/add-part/<part_id>
+@service_ticket_bp.put("/<int:ticket_id>/add-part/<int:part_id>")
+def add_part_to_ticket(ticket_id, part_id):
+    
+    ticket = ServiceTickets.query.get_or_404(ticket_id)
+    part = Parts.query.get_or_404(part_id)
+    part.ticket = ticket       # or: part.ticket_id = ticket_id
+    db.session.commit()
+    return {"message": "Part assigned to ticket"}
