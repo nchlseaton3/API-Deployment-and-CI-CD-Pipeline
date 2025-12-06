@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from app.extensions import db
-from app.models import Inventory, Parts
+from app.models import Inventory, Parts, ServiceTickets
 from . import parts_bp
 from .schemas import inventory_schema, inventories_schema, part_schema, parts_schema
 
@@ -13,61 +13,71 @@ def create_inventory():
     db.session.commit()
     return inventory_schema.jsonify(item), 201
 
-#  Create part
-@parts_bp.post("/create-part")
-def create_part():
-    data = request.json
-    part = Parts(
-        desc_id=data["desc_id"],
-        ticket_id=None
-    )
-    db.session.add(part)
-    db.session.commit()
-    return part_schema.jsonify(part), 201
-
-
-
-# GET all inventory
+#  GET all inventory
 @parts_bp.get("/")
 def get_inventory():
     items = Inventory.query.all()
     return inventories_schema.jsonify(items)
 
+#  Physical part instance
+# POST → Create a physical part using desc_id
+@parts_bp.post("/create-part")
+def create_part():
+    data = request.get_json()
+    errors = part_schema.validate(data)
+    if errors:
+        return jsonify(errors), 400
 
-# UPDATE inventory item
+    # Ensure desc_id exists
+    inventory_item = Inventory.query.get(data["desc_id"])
+    if not inventory_item:
+        return jsonify({"error": "Inventory item not found"}), 404
+
+    part = Parts(
+        desc_id=data["desc_id"],
+        ticket_id=data.get("ticket_id")
+    )
+    db.session.add(part)
+    db.session.commit()
+
+    return part_schema.jsonify(part), 201
+
+
+# PUT → Update a physical part instance (desc_id or ticket_id)
 @parts_bp.put("/<int:id>")
-def update_inventory(id):
-    item = Inventory.query.get_or_404(id)
-    data = request.json
+def update_part(id):
+    part = Parts.query.get(id)
+    if not part:
+        return jsonify({"error": "Part not found"}), 404
 
-    for key, value in data.items():
-        setattr(item, key, value)
+    data = request.get_json()
+
+    # Update physical part fields
+    if "desc_id" in data:
+        inv = Inventory.query.get(data["desc_id"])
+        if not inv:
+            return jsonify({"error": "Inventory item not found"}), 404
+        part.desc_id = data["desc_id"]
+
+    if "ticket_id" in data:
+        if data["ticket_id"] is not None:
+            ticket = ServiceTickets.query.get(data["ticket_id"])
+            if not ticket:
+                return jsonify({"error": "Ticket not found"}), 404
+        part.ticket_id = data["ticket_id"]
 
     db.session.commit()
-    return inventory_schema.jsonify(item)
+    return part_schema.jsonify(part), 200
 
 
-# DELETE inventory item
+# DELETE → Delete physical part instance
 @parts_bp.delete("/<int:id>")
-def delete_inventory(id):
-    item = Inventory.query.get_or_404(id)
-     # Check if any Parts use this inventory item
-    if Parts.query.filter_by(desc_id=id).count() > 0:
-        return {"error": "Cannot delete inventory item because part instances exist. "
-                     "Use /parts/<id>/force-delete to remove everything."}, 400
-    db.session.delete(item)
-    db.session.commit()
-    return jsonify({"message": "Deleted"})
+def delete_part(id):
+    part = Parts.query.get(id)
+    if not part:
+        return jsonify({"error": "Part not found"}), 404
 
-
-@parts_bp.delete("/<int:id>/force-delete")
-def force_delete_inventory(id):
-    item = Inventory.query.get_or_404(id)
-
-    # Delete all part instances linked to this inventory
-    Parts.query.filter_by(desc_id=id).delete()
-
-    db.session.delete(item)
+    db.session.delete(part)
     db.session.commit()
 
-    return {"message": "Inventory item and all related part instances deleted"}
+    return jsonify({"message": "Part deleted"}), 200
