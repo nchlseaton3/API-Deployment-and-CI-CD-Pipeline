@@ -43,9 +43,9 @@ def create_app(config_name="DevConfig"):
     )
     app.register_blueprint(swaggerui_bp, url_prefix=swagger_url)
     
-    # Auto-create tables
-    with app.app_context():
-        db.create_all()
-        print("Database ready")
+    # # Auto-create tables
+    # with app.app_context():
+    #     db.create_all()
+    #     print("Database ready")
 
     return app
