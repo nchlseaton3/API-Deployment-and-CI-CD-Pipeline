@@ -1,0 +1,430 @@
+swagger: "2.0"
+
+info:
+  title: "Mechanic Shop API"
+  description: "API for managing mechanics, service tickets, inventory, and physical parts."
+  version: "1.0.0"
+
+host: "127.0.0.1:5000"
+schemes:
+  - "http"
+
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+
+paths:
+
+  #######################################
+  # MECHANIC ROUTES
+  #######################################
+
+  /mechanics/login:
+    post:
+      tags: 
+        - Mechanics
+      summary: "Mechanic Login"
+      description: "Validates mechanic credentials and returns a JWT token."
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/MechanicLoginInput"
+      responses:
+        200:
+          description: "Login successful"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+        401:
+          description: "Invalid credentials"
+
+  /mechanics/:
+    post:
+      tags:
+        - Mechanics
+      summary: "Create a mechanic"
+      description: "Creates a mechanic record."
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/MechanicInput"
+      responses:
+        201:
+          description: "Mechanic created"
+          schema:
+            $ref: "#/definitions/MechanicResponse"
+
+    get:
+      tags:
+        - Mechanics
+      summary: "Get all mechanics"
+      description: "Returns an array of mechanics."
+      responses:
+        200:
+          description: "List of mechanics"
+          schema:
+            $ref: "#/definitions/MechanicsResponse"
+
+  /mechanics/{id}:
+    put:
+      tags:
+        - Mechanics
+      summary: "Update mechanic"
+      description: "Requires authentication."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          schema:
+            $ref: "#/definitions/MechanicInput"
+      responses:
+        200:
+          description: "Mechanic updated"
+          schema:
+            $ref: "#/definitions/MechanicResponse"
+        404:
+          description: "Mechanic not found"
+
+    delete:
+      tags:
+        - Mechanics
+      summary: "Delete mechanic"
+      description: "Requires authentication."
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: "Mechanic deleted"
+        404:
+          description: "Mechanic not found"
+
+  /mechanics/my-tickets:
+    get:
+      tags:
+        - Mechanics
+      summary: "Get mechanic's assigned tickets"
+      description: "Uses token to determine mechanic identity."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "List of tickets"
+          schema:
+            $ref: "#/definitions/ServiceTicketsResponse"
+        401:
+          description: "Unauthorized"
+
+
+  #######################################
+  # SERVICE TICKET ROUTES
+  #######################################
+
+  /service-tickets/:
+    post:
+      tags:
+        - Service Tickets
+      summary: "Create service ticket"
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: "#/definitions/ServiceTicketInput"
+      responses:
+        201:
+          description: "Ticket created"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+
+    get:
+      tags:
+        - Service Tickets
+      summary: "Get all service tickets"
+      responses:
+        200:
+          description: "List of tickets"
+          schema:
+            $ref: "#/definitions/ServiceTicketsResponse"
+
+  /service-tickets/{ticket_id}/assign-mechanic/{mechanic_id}:
+    put:
+      tags:
+        - Service Tickets
+      summary: "Assign mechanic to ticket"
+      parameters:
+        - in: path
+          name: ticket_id
+          required: true
+          type: integer
+        - in: path
+          name: mechanic_id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: "Mechanic assigned"
+
+  /service-tickets/{ticket_id}/remove-mechanic/{mechanic_id}:
+    put:
+      tags:
+        - Service Tickets
+      summary: "Remove mechanic from ticket"
+      parameters:
+        - in: path
+          name: ticket_id
+          required: true
+          type: integer
+        - in: path
+          name: mechanic_id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: "Mechanic removed"
+
+  /service-tickets/{ticket_id}/add-part/{part_id}:
+    put:
+      tags:
+        - Service Tickets
+      summary: "Add part to ticket"
+      parameters:
+        - in: path
+          name: ticket_id
+          required: true
+          type: integer
+        - in: path
+          name: part_id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: "Part added to ticket"
+        404:
+          description: "Ticket or part not found"
+
+
+  #######################################
+  # INVENTORY ROUTES (Part Types)
+  #######################################
+
+  /parts:
+    post:
+      tags:
+        - Inventory
+      summary: "Create inventory part type"
+      description: "Adds a part name + price to inventory."
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/InventoryInput"
+      responses:
+        201:
+          description: "Inventory item created"
+          schema:
+            $ref: "#/definitions/InventoryResponse"
+
+    get:
+      tags:
+        - Inventory
+      summary: "Get all inventory items"
+      responses:
+        200:
+          description: "List of inventory items"
+          schema:
+            $ref: "#/definitions/InventoryListResponse"
+
+
+  #######################################
+  # PARTS ROUTES (Physical Parts)
+  #######################################
+
+  /parts/create-part:
+    post:
+      tags:
+        - Parts
+      summary: "Create physical part instance"
+      description: "Uses desc_id to reference an inventory item."
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/CreatePartInput"
+      responses:
+        201:
+          description: "Physical part created"
+          schema:
+            $ref: "#/definitions/PartResponse"
+
+  /parts/{id}:
+    put:
+      tags:
+        - Parts
+      summary: "Update a physical part"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/CreatePartInput"
+      responses:
+        200:
+          description: "Part updated"
+          schema:
+            $ref: "#/definitions/PartResponse"
+
+    delete:
+      tags:
+        - Parts
+      summary: "Delete a physical part"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: "Part deleted"
+
+
+#######################################
+# DEFINITIONS
+#######################################
+
+definitions:
+
+  MechanicLoginInput:
+    type: object
+    properties:
+      email: { type: string }
+      password: { type: string }
+    required:
+      - email
+      - password
+
+  LoginResponse:
+    type: object
+    properties:
+      message: { type: string }
+      token: { type: string }
+
+  MechanicInput:
+    type: object
+    properties:
+      first_name: { type: string }
+      last_name: { type: string }
+      email: { type: string }
+      password: { type: string }
+      salary: { type: number }
+      address: { type: string }
+    required:
+      - first_name
+      - last_name
+      - email
+      - password
+      - salary
+
+  MechanicResponse:
+    type: object
+    properties:
+      id: { type: integer }
+      first_name: { type: string }
+      last_name: { type: string }
+      email: { type: string }
+      salary: { type: number }
+      address: { type: string }
+
+  MechanicsResponse:
+    type: array
+    items:
+      $ref: "#/definitions/MechanicResponse"
+
+  ServiceTicketInput:
+    type: object
+    properties:
+      customer_id: { type: integer }
+      service_desc: { type: string }
+      service_date: { type: string }
+      vin: { type: string }
+    required:
+      - customer_id
+      - service_desc
+      - service_date
+      - vin
+
+  ServiceTicketResponse:
+    type: object
+    properties:
+      id: { type: integer }
+      customer_id: { type: integer }
+      service_desc: { type: string }
+      service_date: { type: string }
+      vin: { type: string }
+
+  ServiceTicketsResponse:
+    type: array
+    items:
+      $ref: "#/definitions/ServiceTicketResponse"
+
+  InventoryInput:
+    type: object
+    properties:
+      name: { type: string }
+      price: { type: number }
+    required:
+      - name
+      - price
+
+  InventoryResponse:
+    type: object
+    properties:
+      id: { type: integer }
+      name: { type: string }
+      price: { type: number }
+
+  InventoryListResponse:
+    type: array
+    items:
+      $ref: "#/definitions/InventoryResponse"
+
+  CreatePartInput:
+    type: object
+    properties:
+      desc_id: { type: integer }
+      ticket_id:
+        type: integer
+        nullable: true
+    required:
+      - desc_id
+
+  PartResponse:
+    type: object
+    properties:
+      id: { type: integer }
+      desc_id: { type: integer }
+      ticket_id: { type: integer }
