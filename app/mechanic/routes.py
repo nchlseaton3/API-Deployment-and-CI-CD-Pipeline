@@ -13,7 +13,13 @@ from sqlalchemy import func
 @limiter.limit("5/minute")
 @cache.cached(timeout=20)
 def create_mechanic():
-    data = request.json
+    data = request.json or {}
+
+    required = ["first_name", "last_name", "email", "password", "salary", "address"]
+    missing = [field for field in required if field not in data]
+
+    if missing:
+        return jsonify({"error": f"Missing fields: {missing}"}), 400
 
     mechanic = Mechanics(
         first_name=data["first_name"],
@@ -22,7 +28,6 @@ def create_mechanic():
         salary=data["salary"],
         address=data["address"]
     )
-
     mechanic.set_password(data["password"])
 
     db.session.add(mechanic)

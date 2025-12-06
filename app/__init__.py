@@ -4,21 +4,28 @@ from .extensions import db, ma, limiter, cache
 from .mechanic import mechanic_bp
 from .service_ticket import service_ticket_bp
 from .parts import parts_bp
+from .config import DevConfig, TestingConfig
 
-
-def create_app():
+def create_app(config_name="DevConfig"):
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///shop.db"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    app.config["CACHE_TYPE"] = "SimpleCache"
-    app.config["CACHE_DEFAULT_TIMEOUT"] = 60
-    
-    # Init extensions
+    # Load the appropriate config
+    if config_name == "TestingConfig":
+        app.config.from_object(TestingConfig)
+    else:
+        app.config.from_object(DevConfig)
+
+    # Initialize extensions
     db.init_app(app)
     ma.init_app(app)
+
+    # Disable limiter during tests
+    if not app.config.get("RATELIMIT_ENABLED", True):
+        limiter.enabled = False
+
     limiter.init_app(app)
     cache.init_app(app)
+
 
     # Register blueprints
     app.register_blueprint(mechanic_bp, url_prefix="/mechanics")
