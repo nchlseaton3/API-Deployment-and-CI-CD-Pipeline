@@ -5,9 +5,9 @@ info:
   description: "API for managing mechanics, service tickets, inventory, and physical parts."
   version: "1.0.0"
 
-host: "127.0.0.1:5000"
+host: "https://dashboard.render.com/web/srv-d4rh3eu3jp1c7390k450"
 schemes:
-  - "http"
+  - "https"
 
 consumes:
   - "application/json"
