@@ -5,7 +5,7 @@ info:
   description: "API for managing mechanics, service tickets, inventory, and physical parts."
   version: "1.0.0"
 
-host: "https://dashboard.render.com/web/srv-d4rh3eu3jp1c7390k450"
+host: "api-deployment-and-ci-cd-pipeline-na5x.onrender.com"
 schemes:
   - "https"
 
