@@ -20,3 +20,9 @@ class TestingConfig(BaseConfig):
 
     # Disable rate limiting while testing
     RATELIMIT_ENABLED = False
+
+class ProductionConfig:
+    SQLALCHEMY_DATABASE_URI = os.getenv("PROD_DATABASE_URI") or 'sqlite:///app.db'
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    DEBUG = False
+    TESTING = False
