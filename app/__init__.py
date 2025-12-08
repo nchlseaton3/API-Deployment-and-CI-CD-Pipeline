@@ -4,14 +4,15 @@ from .extensions import db, ma, limiter, cache
 from .mechanic import mechanic_bp
 from .service_ticket import service_ticket_bp
 from .parts import parts_bp
-from .config import DevConfig, TestingConfig
+from .config import DevConfig, TestingConfig, ProductionConfig
+import os
 
 def create_app(config_name="DevConfig"):
     app = Flask(__name__)
 
     # Load the appropriate config
-    if config_name == "TestingConfig":
-        app.config.from_object(TestingConfig)
+    if config_name == "ProductionConfig":
+        app.config.from_object(ProductionConfig)
     else:
         app.config.from_object(DevConfig)
 
@@ -43,9 +44,5 @@ def create_app(config_name="DevConfig"):
     )
     app.register_blueprint(swaggerui_bp, url_prefix=swagger_url)
     
-    # # Auto-create tables
-    # with app.app_context():
-    #     db.create_all()
-    #     print("Database ready")
 
     return app
