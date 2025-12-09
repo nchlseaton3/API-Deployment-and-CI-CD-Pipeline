@@ -221,6 +221,26 @@ paths:
         404:
           description: "Ticket or part not found"
 
+  /service-tickets/create-customer:
+    post:
+      tags:
+        - Service Tickets
+      summary: "Create customer"
+      description: "Creates a customer so their id can be used on service tickets."
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/CustomerInput"
+      responses:
+        201:
+          description: "Customer created"
+          schema:
+            $ref: "#/definitions/CustomerResponse"
+        400:
+          description: "Missing fields"
+
 
   #######################################
   # INVENTORY ROUTES (Part Types)
@@ -392,6 +412,27 @@ definitions:
     type: array
     items:
       $ref: "#/definitions/ServiceTicketResponse"
+  
+  CustomerInput:
+    type: object
+    properties:
+      first_name: { type: string }
+      last_name: { type: string }
+      email: { type: string }
+      phone: { type: string }
+      address: { type: string }
+    required:
+      - first_name
+      - last_name
+      - email
+      - phone
+      - address
+
+  CustomerResponse:
+    type: object
+    properties:
+      message: { type: string }
+      customer_id: { type: integer }
 
   InventoryInput:
     type: object

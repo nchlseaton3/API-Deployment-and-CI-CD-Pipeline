@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from ..extensions import db
-from ..models import ServiceTickets, Mechanics, Parts
+from ..models import ServiceTickets, Mechanics, Parts, Customers
 from . import service_ticket_bp
 from .schemas import service_ticket_schema, service_tickets_schema
 from datetime import datetime 
@@ -71,3 +71,29 @@ def add_part_to_ticket(ticket_id, part_id):
     part.ticket = ticket       # or: part.ticket_id = ticket_id
     db.session.commit()
     return {"message": "Part assigned to ticket"}
+
+@service_ticket_bp.post("/create-customer")
+def create_customer():
+    data = request.get_json()
+
+    required = ["first_name", "last_name", "email", "phone", "address"]
+    for field in required:
+        if field not in data:
+            return {"error": f"{field} is required"}, 400
+
+    # Create customer
+    new_customer = Customers(
+        first_name=data["first_name"],
+        last_name=data["last_name"],
+        email=data["email"],
+        phone=data["phone"],
+        address=data["address"]
+    )
+
+    db.session.add(new_customer)
+    db.session.commit()
+
+    return {
+        "message": "Customer created",
+        "customer_id": new_customer.id
+    }, 201
