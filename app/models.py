@@ -2,7 +2,7 @@ from app.extensions import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Float, Date, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from datetime import date
 
 class Customers(db.Model):
     __tablename__ = "customers"
@@ -23,7 +23,7 @@ class ServiceTickets(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     customer_id: Mapped[int] = mapped_column(ForeignKey("customers.id"))
     service_desc: Mapped[str] = mapped_column(String)
-    service_date: Mapped[str] = mapped_column(Date)
+    service_date: Mapped[date] = mapped_column(Date)
     vin: Mapped[str] = mapped_column(String)
 
     
