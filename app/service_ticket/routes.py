@@ -3,15 +3,34 @@ from ..extensions import db
 from ..models import ServiceTickets, Mechanics, Parts
 from . import service_ticket_bp
 from .schemas import service_ticket_schema, service_tickets_schema
-
+from datetime import datetime 
 
 # POST '/' : create service ticket
 @service_ticket_bp.post("/")
 def create_ticket():
-    data = request.json
-    ticket = service_ticket_schema.load(data)
+    data = request.get_json()
+
+    # Validate required fields
+    required = ("customer_id", "service_desc", "service_date", "vin")
+    if not all(field in data for field in required):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    # Convert date string → Python date object
+    try:
+        service_date = datetime.strptime(data["service_date"], "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"error": "service_date must be YYYY-MM-DD"}), 400
+
+    ticket = ServiceTickets(
+        customer_id=data["customer_id"],
+        service_desc=data["service_desc"],
+        service_date=service_date,  #  Real date object
+        vin=data["vin"]
+    )
+
     db.session.add(ticket)
     db.session.commit()
+
     return service_ticket_schema.jsonify(ticket), 201
 
 
