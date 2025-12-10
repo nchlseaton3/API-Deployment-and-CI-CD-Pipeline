@@ -25,16 +25,26 @@ APP_FACTORY_PATTERN/
 │   │   └─ schemas.py
 │   │
 │   └─ static/
-│       └─ swagger.yaml         
+│       └─ swagger.yaml
 │
 ├─ tests/
-│   |
-│   └─ test_mechanics.py        
+│   └─ test_mechanics.py
 │
 ├─ instance/
-│   ├─ shop.db                  
-│   └─ testing.db               
+│   ├─ shop.db          # Local development DB
+│   ├─ testing.db       # Local test DB (created automatically)
+│   └─ app.db            # Not tracked by Git (SECRET)
 │
-├─ run.py
+├─ .github/
+│   └─ workflows/
+│       └─ main.yaml    # CI/CD Pipeline (build → test → deploy)
+│
+├
+├─ flask_app.py         # Production entrypoint (Gunicorn uses this)
 ├─ requirements.txt
+├─ .gitignore
+├─ APP_Factory_Pattern.txt              
+├─ Mechanic_Shop_ERD_2.png               
+└─ Mechanic Shop API.postman_collection.json
+
 
